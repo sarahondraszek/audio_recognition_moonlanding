@@ -22,7 +22,7 @@ pygame.display.set_caption("Moonlanding")
 
 # DEFINE WIDTH AND HIGHT
 SCREEN_WIDTH = 1200
-SCREEN_HEIGHT = 600
+SCREEN_HEIGHT = 650
 
 # CREATE SCREEN OBJECT
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -109,7 +109,7 @@ def main():
             return rot_image, rot_rect
 
         def rotate(self, surface, rect, angle_old, angle):
-            angle_new = angle - angle_old
+            angle_new = angle_old - angle
             return self.rot_center(surface, rect, angle_new)
 
         def update(self, pressed_keys):
@@ -137,7 +137,7 @@ def main():
             return self.angle
 
         def set_def(self):
-            self.rect.top = 50
+            self.rect.bottom = 150
             self.rect.left = SCREEN_WIDTH / 2 - self.rect.right / 2
 
     class Meteor(pygame.sprite.Sprite):
@@ -148,16 +148,16 @@ def main():
             super(Meteor, self).__init__()
             rocket_pic = resource_path("data/meteor.png")
             self.surf = pygame.transform.scale(pygame.image.load(rocket_pic).convert(), (60, 60))
+            self.surf.set_colorkey((0, 0, 0), RLEACCEL)
             self.rect = self.surf.get_rect()
             self.colision_steps = round(random.random() * 15)
-            self.colision_height = round(random.random() * 300)
+            self.colision_height = round(random.random() * 250)+50
             self.speed = 20
 
         def update(self):
             self.rect.move_ip(self.speed, 0)
             if self.rect.left > SCREEN_WIDTH:
                 self.kill()
-                print("RAUS")
 
         def col_down(self):
             self.colision_steps -= 1
@@ -198,11 +198,12 @@ def main():
     all_sprites.add(rocket)
     all_sprites.add(meteor)
 
+    status = "Freiwillig ausgeschieden"
+
     running = True
-    game_over = False
     step = 0
     strike = False
-    flight = True
+    exit = False
 
     while running:
         if not strike:
@@ -223,6 +224,7 @@ def main():
                     if event.type == QUIT:
                         running = False
                         waiting = False
+                        exit = True
 
             try:
                 meteor.col_down()
@@ -245,7 +247,7 @@ def main():
 
         if pygame.sprite.spritecollideany(rocket, meteor_group):
             running = False
-            print("Getroffen")
+            status = "Getroffen"
 
 
 
@@ -276,15 +278,16 @@ def main():
         if height_val <= 0:
             running = False
             if velocity_val >= 10 or angle_val <= -6 or angle_val >= 6:
-                print("Absturz")
+                status = "Absturz"
             else:
-                print("Landung erfolgreich")
+                status = "Landung erfolgreich"
 
         pygame.display.flip()
         clock.tick(30)
-    pygame.quit()
+    #pygame.quit()
+    return exit, status
 
-def end_screen():
+def end_screen(status):
     game_over = True
     exit = False
     while game_over:
@@ -296,18 +299,31 @@ def end_screen():
                     game_over = False
                     exit = True
             elif event.type == QUIT:
-                game_over = True
+                game_over = False
+                exit = True
 
         screen.fill((0, 0, 0))
 
-        again = font_b.render("Press 'R' to restart the game", True, (255, 255, 255))
+        again = font_a.render("Press 'R' to restart the game", True, (255, 255, 255))
         again_rect = again.get_rect()
-        screen.blit(again, (SCREEN_WIDTH / 2 - again_rect.right / 2, 10))
-    #return exit
+        screen.blit(again, (SCREEN_WIDTH / 2 - again_rect.right / 2, SCREEN_HEIGHT/3 - again_rect.bottom/2))
+        state = font_a.render(str(status), True, (255, 255, 255))
+        status_rect = state.get_rect()
+        screen.blit(state, (SCREEN_WIDTH / 2 - status_rect.right / 2, (SCREEN_HEIGHT / 3)*2 - status_rect.bottom / 2))
+        pygame.display.flip()
+    return exit
+
 
 def game():
     menu()
-    main()
-    #end_screen()
+    while True:
+        quit, status = main()
+        if quit:
+            pygame.quit()
+            break
+        quit = end_screen(status)
+        if quit:
+            pygame.quit()
+            break
 
 game()
