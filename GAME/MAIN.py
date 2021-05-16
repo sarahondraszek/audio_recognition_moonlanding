@@ -2,6 +2,7 @@ import pygame
 import random
 import sys
 import os
+import time
 
 from pygame.locals import (
     RLEACCEL,
@@ -36,6 +37,7 @@ def menu():
     start = True
     space = True
     space_count = 0
+    exit = False
     while start:
         for event in pygame.event.get():
             # Did the user hit a key?
@@ -43,6 +45,13 @@ def menu():
                 # Was it the Escape key? If so, stop the loop.
                 if event.key == K_SPACE:
                     start = False
+                if event.key == K_ESCAPE:
+                    start = False
+                    exit = True
+
+            if event.type == QUIT:
+                start = False
+                exit = True
 
         screen.fill((0, 0, 0))
         welcome = font_a.render("Welcome to Moonlanding", True, (255, 255, 255))
@@ -63,7 +72,7 @@ def menu():
 
         pygame.display.flip()
         clock.tick(30)
-
+    return exit
 
 def main():
     def resource_path(relative_path):
@@ -105,7 +114,7 @@ def main():
         def rot_center(self, image, rect, angle):
             """rotate an image while keeping its center"""
             rot_image = pygame.transform.rotate(image, angle)
-            rot_rect = rot_image.get_rect(center=self.rect.center)
+            rot_rect = rot_image.get_rect(center=rect.center)
             return rot_image, rot_rect
 
         def rotate(self, surface, rect, angle_old, angle):
@@ -113,19 +122,28 @@ def main():
             return self.rot_center(surface, rect, angle_new)
 
         def update(self, pressed_keys):
+            fire = False
+            self.set_surf("data/fireup.png")
             self.velocity += 5
             self.angle_old = self.angle
             self.angle_change()
             if pressed_keys[K_UP]:
                 self.velocity -= 7
-                # print("YES")
+                fire = True
+            elif pressed_keys[K_DOWN]:
+                self.set_surf("data/rocketup.png")
             if pressed_keys[K_LEFT]:
                 self.angle -= 2
+                fire = True
             elif pressed_keys[K_RIGHT]:
                 self.angle += 2
-            self.surf, self.rect = self.rotate(self.surf, self.rect, self.angle_old, self.angle)
+                fire = True
+            self.surf, self.rect = self.rot_center(self.surf, self.rect, -self.angle)
             self.height -= self.velocity
             self.rect.move_ip(0, self.velocity)
+            # time.sleep(0.5)
+            # self.set_surf("data/rocketup.png")
+            return fire
 
         def get_height(self):
             return self.height
@@ -140,6 +158,15 @@ def main():
             self.rect.bottom = 150
             self.rect.left = SCREEN_WIDTH / 2 - self.rect.right / 2
 
+        def set_surf(self, path):
+            rocket_pic = resource_path(path)
+            self.surf = pygame.transform.scale(pygame.image.load(rocket_pic).convert(), (60, 100))
+            self.surf.set_colorkey((0, 0, 0), RLEACCEL)
+            #self.rect = self.surf.get_rect()
+
+        def set_angle(self):
+            self.surf, self.rect = self.rot_center(self.surf, self.rect, -self.angle)
+
     class Meteor(pygame.sprite.Sprite):
         colision_steps = 0
         colision_height = 0
@@ -150,9 +177,9 @@ def main():
             self.surf = pygame.transform.scale(pygame.image.load(rocket_pic).convert(), (60, 60))
             self.surf.set_colorkey((0, 0, 0), RLEACCEL)
             self.rect = self.surf.get_rect()
-            self.colision_steps = round(random.random() * 15)
-            self.colision_height = round(random.random() * 250)+50
-            self.speed = 20
+            self.colision_steps = random.randint(5, 15)
+            self.colision_height = random.randint(100, 400)
+            self.speed = 25
 
         def update(self):
             self.rect.move_ip(self.speed, 0)
@@ -204,59 +231,70 @@ def main():
     step = 0
     strike = False
     exit = False
+    fire = False
 
     while running:
-        if not strike:
-            waiting = True
-            if step == 0:
-                waiting = False
-            while waiting:
-                for event in pygame.event.get():
-                    if event.type == KEYDOWN:
-                        if event.key == K_UP or event.key == K_LEFT or event.key == K_RIGHT or event.key == K_DOWN:
-                            pressed_keys = pygame.key.get_pressed()
-                            rocket.update(pressed_keys)
-                            waiting = False
-                        if event.key == K_ESCAPE:
+        if not fire:
+            if not strike:
+                waiting = True
+                if step == 0:
+                    waiting = False
+                while waiting:
+                    for event in pygame.event.get():
+                        if event.type == KEYDOWN:
+                            if event.key == K_UP or event.key == K_LEFT or event.key == K_RIGHT or event.key == K_DOWN:
+                                pressed_keys = pygame.key.get_pressed()
+                                fire = rocket.update(pressed_keys)
+                                waiting = False
+                                #print(fire)
+                            if event.key == K_ESCAPE:
+                                running = False
+                                waiting = False
+
+                        if event.type == QUIT:
                             running = False
                             waiting = False
+                            exit = True
 
-                    if event.type == QUIT:
-                        running = False
-                        waiting = False
-                        exit = True
+                try:
+                    meteor.col_down()
+                except Exception:
+                    pass
+
+            if strike:
+                meteor.update()
+                if meteor.rect.left > SCREEN_WIDTH:
+                    meteor = -1
+                    strike = False
+                    time.sleep(0.3)
+                    rocket.set_surf("data/rocketup.png")
+                    rocket.set_angle()
+                    #fire = False
 
             try:
-                meteor.col_down()
+                if meteor.get_steps() == 0:
+                    strike = True
             except Exception:
                 pass
 
-        if strike:
-            meteor.update()
-            if meteor.rect.left > SCREEN_WIDTH:
-                meteor = -1
-                strike = False
+            step = -1
 
-        try:
-            if meteor.get_steps() == 0:
-                strike = True
-        except Exception:
-            pass
+            if pygame.sprite.spritecollideany(rocket, meteor_group):
+                running = False
+                status = "Getroffen"
 
-        step = -1
-
-        if pygame.sprite.spritecollideany(rocket, meteor_group):
-            running = False
-            status = "Getroffen"
-
-
+        else:
+            time.sleep(0.3)
+            rocket.set_surf("data/rocketup.png")
+            rocket.set_angle()
+            fire = False
 
         screen.fill((0, 0, 0))
 
         for entity in all_sprites:
             screen.blit(entity.surf, entity.rect)
 
-        # Variablen
+            # Variablen
         velocity_val = rocket.get_velocity()
         height_val = rocket.get_height()
         angle_val = rocket.get_angle()
@@ -277,15 +315,16 @@ def main():
 
         if height_val <= 0:
             running = False
-            if velocity_val >= 10 or angle_val <= -6 or angle_val >= 6:
+            if velocity_val > 10 or angle_val < -6 or angle_val > 6:
                 status = "Absturz"
             else:
                 status = "Landung erfolgreich"
 
         pygame.display.flip()
         clock.tick(30)
-    #pygame.quit()
+    # pygame.quit()
     return exit, status
+
 
 def end_screen(status):
     game_over = True
@@ -306,24 +345,26 @@ def end_screen(status):
 
         again = font_a.render("Press 'R' to restart the game", True, (255, 255, 255))
         again_rect = again.get_rect()
-        screen.blit(again, (SCREEN_WIDTH / 2 - again_rect.right / 2, SCREEN_HEIGHT/3 - again_rect.bottom/2))
+        screen.blit(again, (SCREEN_WIDTH / 2 - again_rect.right / 2, SCREEN_HEIGHT / 3 - again_rect.bottom / 2))
         state = font_a.render(str(status), True, (255, 255, 255))
         status_rect = state.get_rect()
-        screen.blit(state, (SCREEN_WIDTH / 2 - status_rect.right / 2, (SCREEN_HEIGHT / 3)*2 - status_rect.bottom / 2))
+        screen.blit(state, (SCREEN_WIDTH / 2 - status_rect.right / 2, (SCREEN_HEIGHT / 3) * 2 - status_rect.bottom / 2))
         pygame.display.flip()
     return exit
 
 
 def game():
-    menu()
-    while True:
-        quit, status = main()
-        if quit:
-            pygame.quit()
-            break
-        quit = end_screen(status)
-        if quit:
-            pygame.quit()
-            break
+    quit = menu()
+    if not quit:
+        while True:
+            quit, status = main()
+            if quit:
+                pygame.quit()
+                break
+            quit = end_screen(status)
+            if quit:
+                pygame.quit()
+                break
+
 
 game()
