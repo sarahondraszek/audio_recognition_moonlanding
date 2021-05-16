@@ -1,9 +1,0 @@
-label_dict:
-  label1: 'yes'
-  label2: 'up'
-  label3: 'stop'
-  label4: 'right'
-  label5: 'no'
-  label6: 'left'
-  label7: 'go'
-  label8: 'down'
