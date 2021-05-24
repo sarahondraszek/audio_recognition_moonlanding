@@ -33,9 +33,14 @@ y_train_hot = to_categorical(y_train)
 y_test_hot = to_categorical(y_test)
 
 
-# Trains the model
+
 
 def get_model():
+    """
+    # Trains the model
+
+    :return: Trained keras model
+    """
     model = Sequential()
     model.add(Conv2D(32, kernel_size=(2, 2), activation='relu', input_shape=(feature_dim_1, feature_dim_2, channel)))
     model.add(Conv2D(48, kernel_size=(2, 2), activation='relu'))
@@ -54,8 +59,14 @@ def get_model():
     return model
 
 
-# Predictions and reshaping for test data
 def reshape_and_predict(filepath, saved_model):
+    """
+    Predictions and reshaping for test data
+
+    :param filepath: Path of sample wav-data that needs to be reshaped
+    :param saved_model: Trained model, can be loaded from storage
+    :return: Comman prediction for the input wav-file
+    """
     sample = wav2mfcc(filepath)
     sample_reshaped = sample.reshape(1, feature_dim_1, feature_dim_2, channel)
     return get_labels()[0][

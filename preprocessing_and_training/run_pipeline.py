@@ -10,9 +10,9 @@ import glob
 
 """ Set parameters in the files first """
 
-sample_path = '/home/ondraszek/scripts/preprocessing_and_training/'
+sample_path = './command_sampleset/'
 sample_list = glob.glob(sample_path)
-model = keras.models.load_model('/home/ondraszek/scripts/data/model')
+model = keras.models.load_model('./model')
 
 # If you need to create arrays from your audio-data first, please use the following method
 # Feature dimensions are pre-set to 11, can be changed and given manually in the method

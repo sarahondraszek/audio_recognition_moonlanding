@@ -18,6 +18,12 @@ yaml = 'yaml-config.yaml'
 # Output: Tuple (Label, Indices of the labels, one-hot encoded labels)
 
 def get_labels(yaml=yaml):
+    """
+    This function is used to fetch the labels from a yaml file so they can be used by different functions.
+
+    :param yaml: Yaml filed in which the label-values are stored
+    :return: A list of triples each consisting of labels, their indices and their categorical form
+    """
     yaml_file = open(yaml)
     parsed_yaml_file = ym.load(yaml_file, Loader=ym.FullLoader)
     labels = []
@@ -27,8 +33,14 @@ def get_labels(yaml=yaml):
     return labels, label_indices, to_categorical(label_indices)
 
 
-# Function to convert wav-files to MFCCs with max_length manually set to 50, a sampling rate of 16kHz and a n_fft of 512
 def wav2mfcc(file_path, max_len=40):
+    """
+    Function to convert wav-files to MFCCs with max_length manually set to 50, a sampling rate of 16kHz and a n_fft of 512
+
+    :param file_path: Path of stored wav-files
+    :param max_len: Maximum length of MFCCs
+    :return: librosa.mfcc for each file
+    """
     wave, sr = librosa.load(file_path, mono=True, sr=None)
     wave = wave[::3]
     mfcc = librosa.feature.mfcc(wave, sr=16000, n_fft=512)
@@ -46,8 +58,14 @@ def wav2mfcc(file_path, max_len=40):
     return mfcc
 
 
-# Saving data from wav2mfcc in numpy-arrays in files on described path
 def save_data_to_array(path=DATA_PATH_WAV, max_len=40):
+    """
+    Saving data from wav2mfcc in numpy-arrays in files on described path
+
+    :param path: Path where wav-files are stored
+    :param max_len: Maximum length of our numpy arrays (same as in wav2mfcc, length of MFCCs)
+    :return: None
+    """
     labels, _, _ = get_labels(yaml)
 
     for label in labels:
@@ -61,8 +79,14 @@ def save_data_to_array(path=DATA_PATH_WAV, max_len=40):
         np.save('/home/ondraszek/scripts/data/numpy/' + label + '.npy', mfcc_vectors)
 
 
-# Method to obtain training test set in one array
 def get_train_test(split_ratio=0.6, random_state=42):
+    """
+    Method to obtain training test set in one array
+
+    :param split_ratio: Ratio for the training set to be splitted
+    :param random_state: Set to random state seed to fixed value to make model results reproducible
+    :return:
+    """
     # Get available labels
     labels, indices, _ = get_labels(yaml)
 
@@ -81,8 +105,14 @@ def get_train_test(split_ratio=0.6, random_state=42):
     return train_test_split(X, y, test_size=(1 - split_ratio), random_state=random_state, shuffle=True)
 
 
-# Method for dataset preparation, without downsampling to improve performance
+#
 def prepare_dataset(path=DATA_PATH_WAV):
+    """
+    Method for dataset preparation; takes wav-data; without downsampling to improve performance
+
+    :param path: Path of wav-files
+    :return: Prepared data for training
+    """
     labels, _, _ = get_labels(yaml)
     data = {}
     for label in labels:
@@ -102,8 +132,14 @@ def prepare_dataset(path=DATA_PATH_WAV):
 
     return data
 
-# Method for loading dataset in the training script
+
 def load_dataset(path=DATA_PATH_NPY):
+    """
+    Method for loading dataset in the training script
+
+    :param path: Path of stored numpy arrays (MFCCs)
+    :return: Dataset of arrays
+    """
     data = prepare_dataset(path)
 
     dataset = []
