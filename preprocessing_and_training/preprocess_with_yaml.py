@@ -6,12 +6,15 @@ from keras.utils import to_categorical
 import numpy as np
 from tqdm import tqdm
 
-DATA_PATH_WAV = "/home/ondraszek/scripts/data/mini_speech_commands/"
+""" This script is for preprocessing the different files, including our test set for creating the language model,
+as well as for the later used sample set that also has to be transformed """
+
+DATA_PATH_WAV = "/media/nfs/data/speech-commands/wav/"
 DATA_PATH_NPY = "/home/ondraszek/scripts/data/numpy/"
 yaml = 'yaml-config.yaml'
 
 
-# Input: YAML
+# Input: YAML-config file with our labels
 # Output: Tuple (Label, Indices of the labels, one-hot encoded labels)
 
 def get_labels(yaml=yaml):
@@ -24,11 +27,11 @@ def get_labels(yaml=yaml):
     return labels, label_indices, to_categorical(label_indices)
 
 
-# Function to convert wav-files to MFCCs
-def wav2mfcc(file_path, max_len=50):
+# Function to convert wav-files to MFCCs with max_length manually set to 50, a sampling rate of 16kHz and a n_fft of 512
+def wav2mfcc(file_path, max_len=40):
     wave, sr = librosa.load(file_path, mono=True, sr=None)
     wave = wave[::3]
-    mfcc = librosa.feature.mfcc(wave, sr=16000)
+    mfcc = librosa.feature.mfcc(wave, sr=16000, n_fft=512)
 
     # If maximum length exceeds mfcc lengths then pad the remaining ones,
     # meaning the arrays will be made the same length and missing data will be filled with 0s
@@ -43,7 +46,8 @@ def wav2mfcc(file_path, max_len=50):
     return mfcc
 
 
-def save_data_to_array(path=DATA_PATH_WAV, max_len=50):
+# Saving data from wav2mfcc in numpy-arrays in files on described path
+def save_data_to_array(path=DATA_PATH_WAV, max_len=40):
     labels, _, _ = get_labels(yaml)
 
     for label in labels:
@@ -57,6 +61,7 @@ def save_data_to_array(path=DATA_PATH_WAV, max_len=50):
         np.save('/home/ondraszek/scripts/data/numpy/' + label + '.npy', mfcc_vectors)
 
 
+# Method to obtain training test set in one array
 def get_train_test(split_ratio=0.6, random_state=42):
     # Get available labels
     labels, indices, _ = get_labels(yaml)
@@ -76,6 +81,7 @@ def get_train_test(split_ratio=0.6, random_state=42):
     return train_test_split(X, y, test_size=(1 - split_ratio), random_state=random_state, shuffle=True)
 
 
+# Method for dataset preparation, without downsampling to improve performance
 def prepare_dataset(path=DATA_PATH_WAV):
     labels, _, _ = get_labels(yaml)
     data = {}
@@ -89,14 +95,14 @@ def prepare_dataset(path=DATA_PATH_WAV):
             wave, sr = librosa.load(wavfile, mono=True, sr=None)
             # Downsampling
             # wave = wave[::3]
-            mfcc = librosa.feature.mfcc(wave, sr=16000)
+            mfcc = librosa.feature.mfcc(wave, sr=16000, n_fft=512)
             vectors.append(mfcc)
 
         data[label]['mfcc'] = vectors
 
     return data
 
-
+# Method for loading dataset in the training script
 def load_dataset(path=DATA_PATH_NPY):
     data = prepare_dataset(path)
 

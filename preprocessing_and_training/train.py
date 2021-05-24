@@ -5,11 +5,11 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
 from keras.utils import to_categorical
 
-""" Script for training the model for our chosen speech commands """
+""" Script for training the model for chosen speech commands """
 
 # Second dimension of the feature is dim2
 
-feature_dim_2 = 50
+feature_dim_2 = 40
 
 # Loading train set and test set
 
@@ -19,7 +19,7 @@ X_train, X_test, y_train, y_test = get_train_test()
 
 feature_dim_1 = 20
 channel = 1
-epochs = 200
+epochs = 150
 batch_size = 100
 verbose = 1
 num_classes = 8
@@ -44,7 +44,7 @@ def get_model():
     model.add(Dropout(0.25))
     model.add(Flatten())
     model.add(Dense(128, activation='relu'))
-    model.add(Dropout(0.25))
+    model.add(Dropout(0.40))
     model.add(Dense(64, activation='relu'))
     model.add(Dropout(0.4))
     model.add(Dense(num_classes, activation='softmax'))

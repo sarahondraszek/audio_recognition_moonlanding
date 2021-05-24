@@ -1,5 +1,6 @@
 from predict import make_predictions
 from preprocess_with_yaml import get_labels
+from create_arrays import create_arrays
 import keras
 import glob
 
@@ -9,7 +10,7 @@ import glob
 
 """ Set parameters in the files first """
 
-sample_path = '/home/ondraszek/scripts/Befehle_Elsaesser/'
+sample_path = '/home/ondraszek/scripts/preprocessing_and_training/'
 sample_list = glob.glob(sample_path)
 model = keras.models.load_model('/home/ondraszek/scripts/data/model')
 
@@ -24,7 +25,6 @@ model = keras.models.load_model('/home/ondraszek/scripts/data/model')
 # Involved are preprocess_with_yaml.py and train.py
 
 # When you want to test/predict samples, use the following method -> Method takes path for files as param
-
 
 for label in get_labels()[0]:
     print('Label:' + label)
