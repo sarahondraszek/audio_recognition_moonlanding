@@ -9,8 +9,8 @@ from tqdm import tqdm
 """ This script is for preprocessing the different files, including our test set for creating the language model,
 as well as for the later used sample set that also has to be transformed """
 
-DATA_PATH_WAV = "/media/nfs/data/speech-commands/wav/"
-DATA_PATH_NPY = "/home/ondraszek/scripts/data/numpy/"
+DATA_PATH_WAV = "/media/nfs/data/speech-commands/wav/" # training data
+DATA_PATH_NPY = "./numpy/"
 yaml = 'yaml-config.yaml'
 
 
