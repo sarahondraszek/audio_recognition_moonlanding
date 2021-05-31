@@ -29,11 +29,15 @@ SCREEN_HEIGHT = 650
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 font_a = pygame.font.Font('data/consola.ttf', 36)
-font_b = pygame.font.Font('data/consola.ttf', 25)
+font_b = pygame.font.Font('data/consola.ttf', 23)
 clock = pygame.time.Clock()
 
 
 def menu():
+    """
+    Manages the Menu Screen
+    :return: Returns a boolean to see if the game shall terminate
+    """
     start = True
     space = True
     space_count = 0
@@ -74,8 +78,18 @@ def menu():
         clock.tick(30)
     return exit
 
+
 def main():
+    """
+    Manages the actual game
+    :return: A boolean to see if the game shall terminate and the message that shall be shown on the end screen
+    """
     def resource_path(relative_path):
+        """
+        Creates the path to a picture for an object
+        :param relative_path: Accepts the relative path for a picture
+        :return: Returns the absolute path for a picture
+        """
         try:
             # PyInstaller creates a temp folder and stores path in _MEIPASS
             base_path = sys._MEIPASS
@@ -90,6 +104,7 @@ def main():
         angle = 0
         angle_old = 0
         velocity = 0
+        fuel = 100
 
         def __init__(self):
             super(Player, self).__init__()
@@ -99,20 +114,30 @@ def main():
             self.rect = self.surf.get_rect()
 
         def angle_change(self):
+            """
+            Changes the angle of the rocket randomly
+            :return: Returns the new angle
+            """
             r = round(random.random() * 4)
             if r == 0:
-                self.angle -= 4
-            elif r == 1:
                 self.angle -= 2
+            elif r == 1:
+                self.angle -= 1
             elif r == 2:
                 pass
             elif r == 3:
-                self.angle += 2
+                self.angle += 1
             elif r == 4:
-                self.angle += 4
+                self.angle += 2
 
         def rot_center(self, image, rect, angle):
-            """rotate an image while keeping its center"""
+            """
+            rotates an image while keeping its center
+            :param image: Accepts the image to be turned
+            :param rect: Accepts the rect of said image
+            :param angle: Accepts the angle for the turning
+            :return: Returns a turned image
+            """
             rot_image = pygame.transform.rotate(image, angle)
             rot_rect = rot_image.get_rect(center=rect.center)
             return rot_image, rot_rect
@@ -122,13 +147,18 @@ def main():
             return self.rot_center(surface, rect, angle_new)
 
         def update(self, pressed_keys):
+            """
+            Updates the position and parameters of the rocket
+            :param pressed_keys: Accepts a pressed key
+            :return: Returns a boolean to set the fire animation
+            """
             fire = False
             self.set_surf("data/fireup.png")
             self.velocity += 5
             self.angle_old = self.angle
             self.angle_change()
             if pressed_keys[K_UP]:
-                self.velocity -= 7
+                self.velocity -= 10
                 fire = True
             elif pressed_keys[K_DOWN]:
                 self.set_surf("data/rocketup.png")
@@ -141,30 +171,70 @@ def main():
             self.surf, self.rect = self.rot_center(self.surf, self.rect, -self.angle)
             self.height -= self.velocity
             self.rect.move_ip(0, self.velocity)
+            #self.fuel -= 5
             # time.sleep(0.5)
             # self.set_surf("data/rocketup.png")
             return fire
 
         def get_height(self):
+            """
+            Returns the height of the rocket
+            :return: Returns height as int
+            """
             return self.height
 
         def get_velocity(self):
+            """
+            Returns velocity of rocket
+            :return: Returns velocity as int
+            """
             return self.velocity
 
         def get_angle(self):
+            """
+            Returns angle of rocket
+            :return: Returns angle as int
+            """
             return self.angle
 
+        def get_fuel(self):
+            """
+            Returns left fuel of rocket
+            :return: Returns fuel as int
+            """
+            return self.fuel
+
+        def lower_fuel(self):
+            """
+            Lowers the fuel of the rocket
+            :return: None
+            """
+            self.fuel -= 5
+
         def set_def(self):
+            """
+            Sets the default position of the rocket
+            :return: None
+            """
             self.rect.bottom = 150
             self.rect.left = SCREEN_WIDTH / 2 - self.rect.right / 2
 
         def set_surf(self, path):
+            """
+            Sets the surface of the rocket
+            :param path: Accepts a relative path to an image
+            :return: None
+            """
             rocket_pic = resource_path(path)
             self.surf = pygame.transform.scale(pygame.image.load(rocket_pic).convert(), (60, 100))
             self.surf.set_colorkey((0, 0, 0), RLEACCEL)
-            #self.rect = self.surf.get_rect()
+            # self.rect = self.surf.get_rect()
 
         def set_angle(self):
+            """
+            Sets the angle of the rocket
+            :return: None
+            """
             self.surf, self.rect = self.rot_center(self.surf, self.rect, -self.angle)
 
     class Meteor(pygame.sprite.Sprite):
@@ -182,20 +252,40 @@ def main():
             self.speed = 25
 
         def update(self):
+            """
+            Updates the position of the meteor
+            :return: None
+            """
             self.rect.move_ip(self.speed, 0)
             if self.rect.left > SCREEN_WIDTH:
                 self.kill()
 
         def col_down(self):
+            """
+            Counts down the steps until the meteor appears
+            :return: None
+            """
             self.colision_steps -= 1
 
         def get_steps(self):
+            """
+            Returns left steps until the meteor appears
+            :return: Returns left steps as int
+            """
             return self.colision_steps
 
         def get_height(self):
+            """
+            Returns the height where the meteor appears
+            :return: Returns the height as int
+            """
             return self.colision_height
 
         def set_def(self):
+            """
+            Sets the default position of the meteor
+            :return: None
+            """
             self.rect.top = SCREEN_HEIGHT - self.colision_height
             self.rect.right = 0
 
@@ -207,6 +297,10 @@ def main():
             self.rect = self.surf.get_rect()
 
         def set_def(self):
+            """
+            Sets default position of Moon
+            :return: None
+            """
             self.rect.bottom = SCREEN_HEIGHT
             self.rect.left = 0
 
@@ -246,7 +340,9 @@ def main():
                                 pressed_keys = pygame.key.get_pressed()
                                 fire = rocket.update(pressed_keys)
                                 waiting = False
-                                #print(fire)
+                                if not event.key == K_DOWN:
+                                    rocket.lower_fuel()
+                                # print(fire)
                             if event.key == K_ESCAPE:
                                 running = False
                                 waiting = False
@@ -269,7 +365,7 @@ def main():
                     time.sleep(0.3)
                     rocket.set_surf("data/rocketup.png")
                     rocket.set_angle()
-                    #fire = False
+                    # fire = False
 
             try:
                 if meteor.get_steps() == 0:
@@ -298,6 +394,7 @@ def main():
         velocity_val = rocket.get_velocity()
         height_val = rocket.get_height()
         angle_val = rocket.get_angle()
+        fuel_val = rocket.get_fuel()
         try:
             meteor_height_val = meteor.get_height()
             meteor_step_val = meteor.get_steps()
@@ -307,7 +404,8 @@ def main():
 
         # Schriftzug
         values = font_b.render("Velocity: " + str(velocity_val) + "   Height: " + str(height_val) + "   Angle: " + str(
-            angle_val) + "   Step to Meteor: " + str(meteor_step_val) + "   Meteor height: " + str(meteor_height_val),
+            angle_val) + "   Step to Meteor: " + str(meteor_step_val) + "   Meteor height: " + str(
+            meteor_height_val) + "   Fuel: " + str(fuel_val),
                                True, (255, 255, 255))
         values_rect = values.get_rect()
 
@@ -319,6 +417,9 @@ def main():
                 status = "Absturz"
             else:
                 status = "Landung erfolgreich"
+        if fuel_val <= -5:
+            running = False
+            status = "Kein Treibstoff"
 
         pygame.display.flip()
         clock.tick(30)
@@ -327,6 +428,11 @@ def main():
 
 
 def end_screen(status):
+    """
+    Manages the end screen
+    :param status: Accepts the message that shall be shown on the end screen
+    :return: Returns a boolean to see if the game shall terminate
+    """
     game_over = True
     exit = False
     while game_over:
@@ -354,6 +460,10 @@ def end_screen(status):
 
 
 def game():
+    """
+    Manages the order of the menu, the actual game and the end screen
+    :return: None
+    """
     quit = menu()
     if not quit:
         while True:
@@ -365,6 +475,8 @@ def game():
             if quit:
                 pygame.quit()
                 break
+    else:
+        pygame.quit()
 
 
 game()
