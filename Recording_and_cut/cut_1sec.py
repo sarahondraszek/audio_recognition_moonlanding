@@ -1,26 +1,33 @@
 from pydub import AudioSegment
 
+'''  'segment' cuts the loudest, 1-second-long part
+out of an audio file with unknown length
+file path gets passed as an argument
+'''
 def segment(file):
-    sound = AudioSegment.from_file(file, format="wav")
+    sound = AudioSegment.from_file(file, format="wav")  # read wave-file
     # print(len(sound))
-    i = 0
-    j = 999
-    dB = -1000
-    while len(sound) >= j:
+    output = file
+    i = 0  # start window at 0 ms
+    j = 999  # end window at 999 ms
+    k = 0
+    m = 999
+    dB = -1000  # set loudness -1000dB
+    while len(sound) >= j:  # window of 1 sec runs over whole audio
         zwischenspeicher = ".//zwischen.wav"
-        output = file
-        split = sound[i:j]
-        split.export(zwischenspeicher, format="wav")
+        split = sound[i:j]  # split sound in parts of 1 sec
+        split.export(zwischenspeicher, format="wav")  # export the new wave-file
         part = AudioSegment.from_file(zwischenspeicher, format="wav")
-        loudness = part.dBFS
-        if loudness > dB:
+        loudness = part.dBFS  # calculate loudness of current part
+        if loudness > dB:  # if the new segment is louder than the last-loudest segment, replace with new segment
             dB = loudness
             # print("\nNeuer maximaler Wert ist: ")
             # print(dB)
-            split.export(output, format="wav")
-        i += 23
+            k = i
+            m = j  # save time stamp of loudest section
+        i += 23  # shift window 23 ms (a phoneme length)
         j += 23
-
+    sound[k:m].export(output, format="wav")  # replace output with loudest segment
 
 # input = './/input//audio//test.wav'
 # segment(input)
