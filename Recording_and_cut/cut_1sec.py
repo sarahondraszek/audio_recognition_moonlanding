@@ -1,4 +1,5 @@
 from pydub import AudioSegment
+import os
 
 '''  'segment' cuts the loudest, 1-second-long part
 out of an audio file with unknown length
@@ -28,6 +29,7 @@ def segment(file):
         i += 23  # shift window 23 ms (a phoneme length)
         j += 23
     sound[k:m].export(output, format="wav")  # replace output with loudest segment
+    os.remove(".//zwischen.wav")  # remove unnecessary file
 
 # input = './/input//audio//test.wav'
 # segment(input)
