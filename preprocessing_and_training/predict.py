@@ -11,6 +11,8 @@ def make_predictions(file_list, model):
     :param file_list: path to files we want to predict
     :param model: Trained model for our predictions
     :return: None """
-
+    temp_list = []
     for wav_file in glob.glob(file_list):
-        print(reshape_and_predict(filepath=wav_file, saved_model=model))
+        temp_list.append(reshape_and_predict(filepath=wav_file, saved_model=model))
+
+    return temp_list
