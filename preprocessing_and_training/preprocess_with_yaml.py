@@ -10,7 +10,7 @@ from tqdm import tqdm
 as well as for the later used sample set that also has to be transformed """
 
 DATA_PATH_WAV = "/media/nfs/data/speech-commands/wav/"
-DATA_PATH_NPY = "/home/ondraszek/scripts/data/numpy/"
+DATA_PATH_NPY = "./numpy/"
 input_yaml = 'yaml-config.yaml'
 
 
@@ -79,10 +79,11 @@ def save_data_to_array(path=DATA_PATH_WAV, max_len=40):
         np.save('/home/ondraszek/scripts/data/numpy/' + label + '.npy', mfcc_vectors)
 
 
-def get_train_test(split_ratio=0.6, random_state=42):
+def get_train_test(split_ratio=0.6, random_state=42, numpy_path=DATA_PATH_NPY):
     """
     Method to obtain training test set in one array
 
+    :param numpy_path: Path for numpy arrays
     :param split_ratio: Ratio for the training set to be splitted
     :param random_state: Set to random state seed to fixed value to make model results reproducible
     :return:
@@ -91,12 +92,12 @@ def get_train_test(split_ratio=0.6, random_state=42):
     labels, indices, _ = get_labels(input_yaml)
 
     # Getting first arrays
-    X = np.load(DATA_PATH_NPY + labels[0] + '.npy')
+    X = np.load(numpy_path + labels[0] + '.npy')
     y = np.zeros(X.shape[0])
 
     # Append all of the dataset into one single array, same goes for y
     for i, label in enumerate(labels[1:]):
-        x = np.load(DATA_PATH_NPY + label + '.npy')
+        x = np.load(numpy_path + label + '.npy')
         X = np.vstack((X, x))
         y = np.append(y, np.full(x.shape[0], fill_value=(i + 1)))
 
