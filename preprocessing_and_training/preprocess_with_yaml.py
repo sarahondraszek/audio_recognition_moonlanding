@@ -9,15 +9,15 @@ from tqdm import tqdm
 """ This script is for preprocessing the different files, including our test set for creating the language model,
 as well as for the later used sample set that also has to be transformed """
 
-DATA_PATH_WAV = "/media/nfs/data/speech-commands/wav/" # training data
-DATA_PATH_NPY = "./numpy/"
-yaml = 'yaml-config.yaml'
+DATA_PATH_WAV = "/media/nfs/data/speech-commands/wav/"
+DATA_PATH_NPY = "/home/ondraszek/scripts/data/numpy/"
+input_yaml = 'yaml-config.yaml'
 
 
 # Input: YAML-config file with our labels
 # Output: Tuple (Label, Indices of the labels, one-hot encoded labels)
 
-def get_labels(yaml=yaml):
+def get_labels(yaml=input_yaml):
     """
     This function is used to fetch the labels from a yaml file so they can be used by different functions.
 
@@ -66,7 +66,7 @@ def save_data_to_array(path=DATA_PATH_WAV, max_len=40):
     :param max_len: Maximum length of our numpy arrays (same as in wav2mfcc, length of MFCCs)
     :return: None
     """
-    labels, _, _ = get_labels(yaml)
+    labels, _, _ = get_labels(input_yaml)
 
     for label in labels:
         # Init mfcc vectors
@@ -88,7 +88,7 @@ def get_train_test(split_ratio=0.6, random_state=42):
     :return:
     """
     # Get available labels
-    labels, indices, _ = get_labels(yaml)
+    labels, indices, _ = get_labels(input_yaml)
 
     # Getting first arrays
     X = np.load(DATA_PATH_NPY + labels[0] + '.npy')
@@ -113,7 +113,7 @@ def prepare_dataset(path=DATA_PATH_WAV):
     :param path: Path of wav-files
     :return: Prepared data for training
     """
-    labels, _, _ = get_labels(yaml)
+    labels, _, _ = get_labels(input_yaml)
     data = {}
     for label in labels:
         data[label] = {}
