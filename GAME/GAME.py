@@ -457,7 +457,10 @@ def main(path, pathfire):
                                     listen = True
                                     waiting = False
                                     mic.set_on()
-                                    meteor.col_up()
+                                    try:
+                                        meteor.col_up()
+                                    except Exception:
+                                        pass
                             if event.type == QUIT:
                                 running = False
                                 waiting = False
