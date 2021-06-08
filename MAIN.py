@@ -3,7 +3,7 @@ import random
 import sys
 import os
 import time
-from audio_recognition.input_key_ctrl_micr import simulate_key_press, release_key, record_order
+from record_and_cut.input_key_ctrl_micr import simulate_key_press, release_key, record_order
 
 from pygame.locals import (
     RLEACCEL,
