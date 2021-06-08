@@ -1,4 +1,4 @@
-from preprocess_with_yaml import save_data_to_array
+from preprocessing_and_training.preprocess_with_yaml import save_data_to_array
 
 
 # Save data to array file first

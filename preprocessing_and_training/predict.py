@@ -1,5 +1,5 @@
 import keras
-from train import reshape_and_predict
+from preprocessing_and_training.train import reshape_and_predict
 import glob
 
 """ Script for prediction - testing and importing the trained model from train.py """

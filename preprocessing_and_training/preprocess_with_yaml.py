@@ -11,7 +11,7 @@ as well as for the later used sample set that also has to be transformed """
 
 DATA_PATH_WAV = "/media/nfs/data/speech-commands/wav/"
 DATA_PATH_NPY = "./numpy/"
-input_yaml = 'yaml-config.yaml'
+input_yaml = '/Users/sarahreb/Desktop/Uni/SoSe2021/CL Projektseminar/audio_recognition_moonlanding/preprocessing_and_training/yaml-config.yaml'
 
 
 # Input: YAML-config file with our labels

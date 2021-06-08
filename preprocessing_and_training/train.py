@@ -1,4 +1,4 @@
-from preprocess_with_yaml import wav2mfcc, get_labels, get_train_test
+from preprocessing_and_training.preprocess_with_yaml import wav2mfcc, get_labels, get_train_test
 import numpy as np
 import keras
 from keras.models import Sequential
@@ -13,7 +13,7 @@ feature_dim_2 = 40
 
 # Loading train set and test set
 
-X_train, X_test, y_train, y_test = get_train_test()
+# X_train, X_test, y_train, y_test = get_train_test()
 
 # Feature dimension
 
@@ -26,11 +26,11 @@ num_classes = 8
 
 # Reshaping to perform 2D convolution
 
-X_train = X_train.reshape(X_train.shape[0], feature_dim_1, feature_dim_2, channel)
-X_test = X_test.reshape(X_test.shape[0], feature_dim_1, feature_dim_2, channel)
+# X_train = X_train.reshape(X_train.shape[0], feature_dim_1, feature_dim_2, channel)
+# X_test = X_test.reshape(X_test.shape[0], feature_dim_1, feature_dim_2, channel)
 
-y_train_hot = to_categorical(y_train)
-y_test_hot = to_categorical(y_test)
+# y_train_hot = to_categorical(y_train)
+# y_test_hot = to_categorical(y_test)
 
 
 

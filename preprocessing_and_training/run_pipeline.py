@@ -1,6 +1,6 @@
-from predict import make_predictions
-from preprocess_with_yaml import get_labels
-from create_arrays import create_arrays
+from preprocessing_and_training.predict import make_predictions
+from preprocessing_and_training.preprocess_with_yaml import get_labels
+from preprocessing_and_training.create_arrays import create_arrays
 import keras
 import glob
 import pandas
