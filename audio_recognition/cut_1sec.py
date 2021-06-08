@@ -5,6 +5,8 @@ import os
 out of an audio file with unknown length
 file path gets passed as an argument
 '''
+
+
 def segment(file):
     sound = AudioSegment.from_file(file, format="wav")  # read wave-file
     # print(len(sound))
@@ -26,8 +28,8 @@ def segment(file):
             # print(dB)
             k = i
             m = j  # save time stamp of loudest section
-        i += 23  # shift window 23 ms (a phoneme length)
-        j += 23
+        i += 10  # shift window 10ms
+        j += 10
     sound[k:m].export(output, format="wav")  # replace output with loudest segment
     os.remove(".//zwischen.wav")  # remove unnecessary file
 
