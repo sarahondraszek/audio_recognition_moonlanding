@@ -11,7 +11,7 @@ kb = Controller()
 sample_rate = 16000
 duration = 3
 frames = sample_rate * duration
-path = './recorded_order.wav'
+path = './record_and_cut/recorded_order.wav'
 
 """Possible variable connection to game parameters / status"""
 """
