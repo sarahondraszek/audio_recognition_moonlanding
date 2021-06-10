@@ -178,6 +178,7 @@ def main(path, pathfire):
     :return: A boolean to see if the game shall terminate and the message that shall be shown on the end screen
     :param: paths for the images (depending on the player's choice)
     """
+
     def resource_path(relative_path):
         """
         Creates the path to a picture for an object
@@ -254,7 +255,7 @@ def main(path, pathfire):
             if pressed_keys[K_UP]:
                 self.velocity -= 10
                 fire = True
-                release_key("up")    # ---------------------------------------------------------------------------------
+                release_key("up")  # ---------------------------------------------------------------------------------
             elif pressed_keys[K_DOWN]:
                 self.set_surf(path)
                 release_key("down")  # ---------------------------------------------------------------------------------
@@ -269,7 +270,7 @@ def main(path, pathfire):
             self.surf, self.rect = self.rot_center(self.surf, self.rect, -self.angle)
             self.height -= self.velocity
             self.rect.move_ip(0, self.velocity)
-            #self.fuel -= 5
+            # self.fuel -= 5
             # time.sleep(0.5)
             # self.set_surf("data/rocketup.png")
             return fire
@@ -552,7 +553,7 @@ def main(path, pathfire):
                 rocket.set_angle()
                 fire = False
         else:
-            #mic.set_on()
+            # mic.set_on()
             listen_time += 1
             if listen_time > 90:
                 listen_time = 0
@@ -637,17 +638,18 @@ def end_screen(status):
 
         again = font_a.render("Do you want to restart the game?", True, (255, 255, 255))
         again_rect = again.get_rect()
-        screen.blit(again, (SCREEN_WIDTH / 2 - again_rect.right / 2, (SCREEN_HEIGHT / 3)*2-70 - again_rect.bottom / 2))
+        screen.blit(again,
+                    (SCREEN_WIDTH / 2 - again_rect.right / 2, (SCREEN_HEIGHT / 3) * 2 - 70 - again_rect.bottom / 2))
 
         # --------------------------------------------------------------------------------------------------------------
         """Adding Tips for User Interaction"""
         tip = font_a.render('(If yes press R or say "yes")', True, (10, 255, 10))
         tip_rect = tip.get_rect()
-        screen.blit(tip, (SCREEN_WIDTH / 2 - tip_rect.right / 2, (SCREEN_HEIGHT / 3)*2 - tip_rect.bottom / 2))
+        screen.blit(tip, (SCREEN_WIDTH / 2 - tip_rect.right / 2, (SCREEN_HEIGHT / 3) * 2 - tip_rect.bottom / 2))
         tip2 = font_a.render('(If no press ESC or say "no")', True, (255, 10, 10))
         tip2_rect = tip2.get_rect()
 
-        screen.blit(tip2, (SCREEN_WIDTH / 2 - tip2_rect.right / 2, (SCREEN_HEIGHT / 3)*2+50 - tip2_rect.bottom / 2))
+        screen.blit(tip2, (SCREEN_WIDTH / 2 - tip2_rect.right / 2, (SCREEN_HEIGHT / 3) * 2 + 50 - tip2_rect.bottom / 2))
         state = font_a.render(str(status), True, (255, 255, 255))
         status_rect = state.get_rect()
         screen.blit(state, (SCREEN_WIDTH / 2 - status_rect.right / 2, (SCREEN_HEIGHT / 3) - status_rect.bottom / 2))

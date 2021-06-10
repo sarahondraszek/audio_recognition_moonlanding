@@ -15,15 +15,14 @@ sample_list = glob.glob(sample_path)
 model = keras.models.load_model('./model')
 
 # If you need to create arrays from your audio-data first, please use the following method
-# Feature dimensions are pre-set to 11, can be changed and given manually in the method
+# Feature dimensions are pre-set to 40, can be changed and given manually in the method
 # Involved are: preprocess_with_yaml.py and create_arrays.py
 # Remember changing the paths in the preprocess_with_yaml.py to add where to save the arrays
 
 """ Create numpy-arrays """
-
 # create_arrays()
 
-# If you need to train the model, please use the train.py script so you can save it locally
+# If you need to train the model, please use the run_train.py script so you can save it locally
 # Involved are preprocess_with_yaml.py and train.py
 
 """ Train model """

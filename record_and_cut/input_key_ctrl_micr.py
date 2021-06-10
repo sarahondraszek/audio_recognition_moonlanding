@@ -2,6 +2,8 @@ from pynput.keyboard import Key, Controller
 import keyboard
 import sounddevice
 from scipy.io.wavfile import write
+from tensorflow import keras
+
 from record_and_cut.cut_1sec import segment as s
 from preprocessing_and_training.predict import make_single_prediction as msp
 
@@ -49,8 +51,8 @@ def record_order():
 
     # amplitudes = signal_data[:1 * sample_rate]
     s(path)
-    nn_model = gm()
-    order = msp(path, nn_model)
+    nn_model = keras.models.load_model('./preprocessing_and_training/model')
+    order = msp(path, nn_model, is_game=True)
     print(order)
     return order
 

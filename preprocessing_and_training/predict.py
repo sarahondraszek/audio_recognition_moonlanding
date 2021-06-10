@@ -18,7 +18,7 @@ def make_predictions(file_list, model):
     return temp_list
 
 
-def make_single_prediction(wav_file, model):
+def make_single_prediction(wav_file, model, is_game=False):
     """ Predictions with model that is locally saved
 
     :param wav_file: wav-file we want to predict

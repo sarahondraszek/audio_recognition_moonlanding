@@ -2,35 +2,42 @@ import librosa
 import yaml as ym
 import os
 from sklearn.model_selection import train_test_split
-from keras.utils import to_categorical
+# from keras.utils import to_categorical
 import numpy as np
 from tqdm import tqdm
+import tensorflow as tf
 
 """ This script is for preprocessing the different files, including our test set for creating the language model,
 as well as for the later used sample set that also has to be transformed """
 
 DATA_PATH_WAV = "/media/nfs/data/speech-commands/wav/"
 DATA_PATH_NPY = "./numpy/"
-input_yaml = './preprocessing_and_training/yaml-config.yaml'
+input_yaml = 'yaml-config.yaml'
 
 
 # Input: YAML-config file with our labels
 # Output: Tuple (Label, Indices of the labels, one-hot encoded labels)
 
-def get_labels(yaml=input_yaml):
+def get_labels(*yaml, is_game=False):
     """
     This function is used to fetch the labels from a yaml file so they can be used by different functions.
 
     :param yaml: Yaml filed in which the label-values are stored
     :return: A list of triples each consisting of labels, their indices and their categorical form
     """
+    if is_game:
+        yaml = './preprocessing_and_training/yaml-config.yaml'
+    else:
+        yaml = 'yaml-config.yaml'
+
     yaml_file = open(yaml)
     parsed_yaml_file = ym.load(yaml_file, Loader=ym.FullLoader)
     labels = []
     for x in parsed_yaml_file["label_dict"].values():
         labels.append(x)
     label_indices = np.arange(0, len(labels))
-    return labels, label_indices, to_categorical(label_indices)
+    return labels, label_indices, tf.keras.utils.to_categorical(label_indices)
+
 
 
 def wav2mfcc(file_path, max_len=40):

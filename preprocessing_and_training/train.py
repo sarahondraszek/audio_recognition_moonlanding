@@ -1,19 +1,16 @@
-from preprocessing_and_training.preprocess_with_yaml import wav2mfcc, get_labels, get_train_test
 import numpy as np
 import keras
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
-from keras.utils import to_categorical
+# from keras.utils import to_categorical
+from preprocessing_and_training.preprocess_with_yaml import wav2mfcc, get_labels
+import tensorflow as tf
 
 """ Script for training the model for chosen speech commands """
 
 # Second dimension of the feature is dim2
 
 feature_dim_2 = 40
-
-# Loading train set and test set
-
-# X_train, X_test, y_train, y_test = get_train_test()
 
 # Feature dimension
 
@@ -23,16 +20,6 @@ epochs = 150
 batch_size = 100
 verbose = 1
 num_classes = 8
-
-# Reshaping to perform 2D convolution
-
-# X_train = X_train.reshape(X_train.shape[0], feature_dim_1, feature_dim_2, channel)
-# X_test = X_test.reshape(X_test.shape[0], feature_dim_1, feature_dim_2, channel)
-
-# y_train_hot = to_categorical(y_train)
-# y_test_hot = to_categorical(y_test)
-
-
 
 
 def get_model():
@@ -59,7 +46,7 @@ def get_model():
     return model
 
 
-def reshape_and_predict(filepath, saved_model):
+def reshape_and_predict(filepath, saved_model, is_game=False):
     """
     Predictions and reshaping for test data
 
@@ -72,10 +59,3 @@ def reshape_and_predict(filepath, saved_model):
     return get_labels()[0][
         np.argmax(saved_model.predict(sample_reshaped))
     ]
-
-
-""" Save the model in the correct folder so we can later load it - Uncomment when in need of a need model """
-# model = get_model()
-# model.fit(X_train, y_train_hot, batch_size=batch_size, epochs=epochs, verbose=verbose,
-#           validation_data=(X_test, y_test_hot))
-# model.save('/home/ondraszek/scripts/data/model')
