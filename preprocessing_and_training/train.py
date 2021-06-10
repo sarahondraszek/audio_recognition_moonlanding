@@ -46,16 +46,16 @@ def get_model():
     return model
 
 
-def reshape_and_predict(filepath, saved_model, is_game=False):
+def reshape_and_predict(filepath, saved_model, is_game):
     """
     Predictions and reshaping for test data
 
     :param filepath: Path of sample wav-data that needs to be reshaped
     :param saved_model: Trained model, can be loaded from storage
-    :return: Comman prediction for the input wav-file
+    :return: Command prediction for the input wav-file
     """
     sample = wav2mfcc(filepath)
     sample_reshaped = sample.reshape(1, feature_dim_1, feature_dim_2, channel)
-    return get_labels()[0][
+    return get_labels(is_game=is_game)[0][
         np.argmax(saved_model.predict(sample_reshaped))
     ]

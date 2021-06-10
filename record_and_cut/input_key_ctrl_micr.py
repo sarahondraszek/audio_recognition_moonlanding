@@ -52,7 +52,7 @@ def record_order():
     # amplitudes = signal_data[:1 * sample_rate]
     s(path)
     nn_model = keras.models.load_model('./preprocessing_and_training/model')
-    order = msp(path, nn_model, is_game=True)
+    order = msp(path, nn_model, True)
     print(order)
     return order
 

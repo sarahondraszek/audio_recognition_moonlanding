@@ -39,7 +39,6 @@ def get_labels(*yaml, is_game=False):
     return labels, label_indices, tf.keras.utils.to_categorical(label_indices)
 
 
-
 def wav2mfcc(file_path, max_len=40):
     """
     Function to convert wav-files to MFCCs with max_length manually set to 50, a sampling rate of 16kHz and a n_fft of 512

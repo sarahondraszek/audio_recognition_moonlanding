@@ -18,11 +18,11 @@ def make_predictions(file_list, model):
     return temp_list
 
 
-def make_single_prediction(wav_file, model, is_game=False):
+def make_single_prediction(wav_file, model, is_game):
     """ Predictions with model that is locally saved
 
     :param wav_file: wav-file we want to predict
     :param model: Trained model for our predictions
     :return: None """
 
-    return reshape_and_predict(filepath=wav_file, saved_model=model)
+    return reshape_and_predict(filepath=wav_file, saved_model=model, is_game=is_game)
