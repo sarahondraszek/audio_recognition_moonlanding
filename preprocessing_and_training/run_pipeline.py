@@ -20,7 +20,7 @@ model = keras.models.load_model('./model')
 # Remember changing the paths in the preprocess_with_yaml.py to add where to save the arrays
 
 """ Create numpy-arrays """
-# create_arrays()
+create_arrays()
 
 # If you need to train the model, please use the run_train.py script so you can save it locally
 # Involved are preprocess_with_yaml.py and train.py

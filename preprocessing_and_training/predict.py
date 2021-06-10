@@ -5,7 +5,7 @@ import glob
 """ Script for prediction - testing and importing the trained model from train.py """
 
 
-def make_predictions(file_list, model):
+def make_predictions(file_list, model, is_game=False):
     """ Predictions with model that is locally saved
 
     :param file_list: path to files we want to predict
@@ -13,7 +13,7 @@ def make_predictions(file_list, model):
     :return: None """
     temp_list = []
     for wav_file in glob.glob(file_list):
-        temp_list.append(reshape_and_predict(filepath=wav_file, saved_model=model))
+        temp_list.append(reshape_and_predict(filepath=wav_file, saved_model=model, is_game=is_game))
 
     return temp_list
 
