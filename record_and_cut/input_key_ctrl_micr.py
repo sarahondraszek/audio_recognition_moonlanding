@@ -41,7 +41,7 @@ def record_order():
     """Recording with specified parameters"""
 
     print('°')
-    record = sounddevice.rec(frames, sample_rate, channels=1)
+    record = sounddevice.rec(frames, sample_rate, channels=1, dtype='int16')
     sounddevice.wait()  # wait for exit recording
     write(path, sample_rate, record)
 
