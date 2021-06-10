@@ -1,3 +1,5 @@
+import pathlib
+
 import librosa
 import yaml as ym
 import os
@@ -10,8 +12,8 @@ import tensorflow as tf
 """ This script is for preprocessing the different files, including our test set for creating the language model,
 as well as for the later used sample set that also has to be transformed """
 
-DATA_PATH_WAV = "/media/nfs/data/speech-commands/wav/"
-DATA_PATH_NPY = "./numpy/"
+DATA_PATH_WAV = './data/mini_speech_commands/'
+DATA_PATH_NPY = "./numpy/test/"
 input_yaml = 'yaml-config.yaml'
 
 
@@ -82,7 +84,7 @@ def save_data_to_array(path=DATA_PATH_WAV, max_len=40):
         for wavfile in tqdm(wavfiles, "Saving vectors of label - '{}'".format(label)):
             mfcc = wav2mfcc(wavfile, max_len=max_len)
             mfcc_vectors.append(mfcc)
-        np.save('/home/ondraszek/scripts/data/numpy/' + label + '.npy', mfcc_vectors)
+        np.save('./numpy/test/' + label + '.npy', mfcc_vectors)
 
 
 def get_train_test(split_ratio=0.6, random_state=42, numpy_path=DATA_PATH_NPY):
