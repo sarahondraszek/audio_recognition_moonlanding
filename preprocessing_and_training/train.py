@@ -1,7 +1,7 @@
 import numpy as np
-import keras
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
+import tensorflow.keras
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
 # from keras.utils import to_categorical
 from preprocessing_and_training.preprocess_with_yaml import wav2mfcc, get_labels
 import tensorflow as tf

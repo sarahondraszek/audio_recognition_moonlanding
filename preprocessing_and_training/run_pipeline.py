@@ -1,7 +1,7 @@
 from preprocessing_and_training.predict import make_predictions
 from preprocessing_and_training.preprocess_with_yaml import get_labels
 from preprocessing_and_training.create_arrays import create_arrays
-import keras
+import tensorflow.keras
 import glob
 import pandas
 
