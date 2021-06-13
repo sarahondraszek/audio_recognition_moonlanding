@@ -72,6 +72,7 @@ def choose_player():
     exit = False
     path = ""
     pathfire = ""
+    difficulty = 0
     while start:
         for event in pygame.event.get():
             # Did the user hit a key?
@@ -83,14 +84,17 @@ def choose_player():
                 if event.key == K_1:
                     path = "game/data/naumannnofire.png"
                     pathfire = "game/data/naumannfire.png"
+                    difficulty = 1
                     start = False
                 if event.key == K_2:
                     path = "game/data/studiforcenofire.png"
                     pathfire = "game/data/studiforcefire.png"
+                    difficulty = 2
                     start = False
                 if event.key == K_3:
                     path = "game/data/kuglernofire.png"
                     pathfire = "game/data/kuglerfire.png"
+                    difficulty = 3
                     start = False
             if event.type == QUIT:
                 start = False
@@ -112,7 +116,7 @@ def choose_player():
         screen.blit(choose3, (900, 500))
         pygame.display.flip()
         clock.tick(30)
-    return exit, path, pathfire
+    return exit, path, pathfire, difficulty
 
 
 def menu():
@@ -172,7 +176,7 @@ def menu():
     return exit
 
 
-def main(path, pathfire):
+def main(path, pathfire, difficulty):
     """
     Manages the actual game
     :return: A boolean to see if the game shall terminate and the message that shall be shown on the end screen
@@ -199,7 +203,7 @@ def main(path, pathfire):
         angle = 0
         angle_old = 0
         velocity = 0
-        fuel = 100
+        fuel = 200
 
         def __init__(self):
             super(Player, self).__init__()
@@ -208,22 +212,47 @@ def main(path, pathfire):
             self.surf.set_colorkey((0, 0, 0), RLEACCEL)
             self.rect = self.surf.get_rect()
 
-        def angle_change(self):
+        def angle_change(self, d):
             """
             Changes the angle of the rocket randomly
             :return: Returns the new angle
             """
-            r = round(random.random() * 4)
-            if r == 0:
-                self.angle -= 2
-            elif r == 1:
-                self.angle -= 1
-            elif r == 2:
-                pass
-            elif r == 3:
-                self.angle += 1
-            elif r == 4:
-                self.angle += 2
+            if d == 1:
+                r = round(random.random() * 4)
+                if r == 0:
+                    self.angle -= 2
+                elif r == 1:
+                    self.angle -= 1
+                elif r == 2:
+                    pass
+                elif r == 3:
+                    self.angle += 1
+                elif r == 4:
+                    self.angle += 2
+            elif d == 2:
+                r = round(random.random() * 4)
+                if r == 0:
+                    self.angle -= 3
+                elif r == 1:
+                    self.angle -= 1
+                elif r == 2:
+                    pass
+                elif r == 3:
+                    self.angle += 2
+                elif r == 4:
+                    self.angle += 3
+            else:
+                r = round(random.random() * 4)
+                if r == 0:
+                    self.angle -= 3
+                elif r == 1:
+                    self.angle -= 3
+                elif r == 2:
+                    pass
+                elif r == 3:
+                    self.angle += 1
+                elif r == 4:
+                    self.angle += 4
 
         def rot_center(self, image, rect, angle):
             """
@@ -251,22 +280,55 @@ def main(path, pathfire):
             self.set_surf(pathfire)
             self.velocity += 5
             self.angle_old = self.angle
-            self.angle_change()
-            if pressed_keys[K_UP]:
-                self.velocity -= 10
-                fire = True
-                release_key("up")  # ---------------------------------------------------------------------------------
-            elif pressed_keys[K_DOWN]:
-                self.set_surf(path)
-                release_key("down")  # ---------------------------------------------------------------------------------
-            elif pressed_keys[K_LEFT]:
-                self.angle -= 2
-                fire = True
-                release_key("left")  # ---------------------------------------------------------------------------------
-            elif pressed_keys[K_RIGHT]:
-                self.angle += 2
-                fire = True
-                release_key("right")  # --------------------------------------------------------------------------------
+            self.angle_change(difficulty)
+            if difficulty == 1:
+                if pressed_keys[K_UP]:
+                    self.velocity -= 12
+                    fire = True
+                    release_key("up")
+                elif pressed_keys[K_DOWN]:
+                    self.set_surf(path)
+                    release_key("down")
+                elif pressed_keys[K_LEFT]:
+                    self.angle -= 2
+                    fire = True
+                    release_key("left")
+                elif pressed_keys[K_RIGHT]:
+                    self.angle += 2
+                    fire = True
+                    release_key("right")
+            elif difficulty == 2:
+                if pressed_keys[K_UP]:
+                    self.velocity -= 10
+                    fire = True
+                    release_key("up")
+                elif pressed_keys[K_DOWN]:
+                    self.set_surf(path)
+                    release_key("down")
+                elif pressed_keys[K_LEFT]:
+                    self.angle -= 2
+                    fire = True
+                    release_key("left")
+                elif pressed_keys[K_RIGHT]:
+                    self.angle += 2
+                    fire = True
+                    release_key("right")
+            else:
+                if pressed_keys[K_UP]:
+                    self.velocity -= 8
+                    fire = True
+                    release_key("up")
+                elif pressed_keys[K_DOWN]:
+                    self.set_surf(path)
+                    release_key("down")
+                elif pressed_keys[K_LEFT]:
+                    self.angle -= 2
+                    fire = True
+                    release_key("left")
+                elif pressed_keys[K_RIGHT]:
+                    self.angle += 2
+                    fire = True
+                    release_key("right")
             self.surf, self.rect = self.rot_center(self.surf, self.rect, -self.angle)
             self.height -= self.velocity
             self.rect.move_ip(0, self.velocity)
@@ -419,17 +481,42 @@ def main(path, pathfire):
             self.rect = self.surf.get_rect()
 
         def set_on(self):
-            self.rect.bottom = SCREEN_HEIGHT - 30
-            self.rect.left = 30
+            self.rect.top = 70
+            self.rect.left = 10
 
         def set_off(self):
             self.bottom = SCREEN_HEIGHT + 40
             self.rect.left = -40
 
+
+    class Explosion(pygame.sprite.Sprite):
+        def __init__(self):
+            super(Explosion, self).__init__()
+
+        def set_small(self, pos_bottom):
+            explo_pic = resource_path("game/data/explo_small.png")
+            self.surf = pygame.transform.scale(pygame.image.load(explo_pic).convert(), (300, 400))
+            self.surf.set_colorkey((0, 0, 0), RLEACCEL)
+            self.rect = self.surf.get_rect()
+            self.rect.bottom = pos_bottom
+            self.rect.left = SCREEN_WIDTH / 2 - self.rect.right / 2
+
+        def set_big(self, pos_bottom):
+            explo_pic = resource_path("game/data/explo_big.png")
+            self.surf = pygame.transform.scale(pygame.image.load(explo_pic).convert(), (300, 400))
+            self.surf.set_colorkey((0, 0, 0), RLEACCEL)
+            self.rect = self.surf.get_rect()
+            self.rect.bottom = pos_bottom
+            self.rect.left = SCREEN_WIDTH / 2 - self.rect.right / 2
+
+        def set_off(self):
+            self.rect.top = SCREEN_HEIGHT
+
     rocket = Player()
     meteor = Meteor()
     moon = Moon()
     mic = Microphone()
+    explosion = Explosion()
 
     moon.set_def()
     rocket.set_def()
@@ -453,6 +540,8 @@ def main(path, pathfire):
     fire = False
     listen = False
     listen_time = 0
+    order = ""
+    crash = False
 
     while running:
 
@@ -461,6 +550,23 @@ def main(path, pathfire):
                 waiting = True
                 if step == 0:
                     waiting = False
+                if listen:
+                    waiting = False
+                    order = record_order()
+                    if order == "right":
+                        simulate_key_press("right")
+                    elif order == "left":
+                        simulate_key_press("left")
+                    elif order == "up":
+                        simulate_key_press("up")
+                    elif order == "down":
+                        simulate_key_press("down")
+                    elif order == "go":
+                        simulate_key_press("down")
+                    elif order == "stop":
+                        running = False
+                    listen = False
+                    mic.set_off()
                 while waiting:
                     for event in pygame.event.get():
                         if event.type == KEYDOWN:
@@ -471,25 +577,8 @@ def main(path, pathfire):
                             updated and after that the key is released"""
                             if event.key == K_SPACE:
                                 mic.set_on()
-                                if listen:
-                                    order = record_order()
-                                    if order == "right":
-                                        simulate_key_press("right")
-                                    elif order == "left":
-                                        simulate_key_press("left")
-                                    elif order == "up":
-                                        simulate_key_press("up")
-                                    elif order == "down":
-                                        simulate_key_press("down")
-                                    elif order == "go":
-                                        simulate_key_press("down")
-                                    elif order == "stop":
-                                        running = False
-                                        listen = False
-                                    mic.set_off()
-                                    waiting = False
-                                else:
-                                    listen = True
+                                listen = True
+                                waiting = False
 
                             if event.key == K_UP or event.key == K_LEFT or event.key == K_RIGHT or event.key == K_DOWN:
                                 pressed_keys = pygame.key.get_pressed()
@@ -501,13 +590,6 @@ def main(path, pathfire):
                             if event.key == K_ESCAPE:
                                 running = False
                                 waiting = False
-                            if event.key == K_SPACE:
-                                listen = True
-                                waiting = False
-                                try:
-                                    meteor.col_up()
-                                except Exception:
-                                    pass
                         if event.type == QUIT:
                             running = False
                             waiting = False
@@ -571,10 +653,13 @@ def main(path, pathfire):
         values_rect = values.get_rect()
 
         screen.blit(values, values_rect)
+        last_order = font_b.render("Last Order: " + order, True, (255, 100, 0))
+        last_order_rect = last_order.get_rect()
+        screen.blit(last_order, (0, 40))
 
         if height_val <= 0:
             running = False
-            if velocity_val > 10 or angle_val < -6 or angle_val > 6:
+            if velocity_val >= 10 or angle_val <= -6 or angle_val >= 6:
                 status = "Crash"
             else:
                 status = "Landed successfully"
@@ -584,6 +669,34 @@ def main(path, pathfire):
 
         pygame.display.flip()
         clock.tick(30)
+
+    if status == "Crash" or status == "Rocket was hit":
+        explo = True
+        if status == "Crash":
+            height = SCREEN_HEIGHT
+        else:
+            height = SCREEN_HEIGHT - meteor.get_height() + 60
+        explosion.set_small(height)
+        crash_sprites = pygame.sprite.Group()
+        crash_sprites.add(moon)
+        crash_sprites.add(explosion)
+        runs = 0
+        while explo:
+            if runs == 8:
+                explosion.set_big(height)
+            elif runs == 16:
+                explosion.set_small(height)
+            elif runs == 24:
+                explosion.set_off()
+            elif runs == 36:
+                explo = False
+            runs += 1
+            screen.fill((0, 0, 0))
+            for entity in crash_sprites:
+                screen.blit(entity.surf, entity.rect)
+            pygame.display.flip()
+            clock.tick(30)
+
     return exit, status
 
 
@@ -648,7 +761,7 @@ def game():
     :return: None
     """
     while True:
-        quit, path, pathfire = choose_player()
+        quit, path, pathfire, difficulty = choose_player()
         if quit:
             pygame.quit()
             break
@@ -656,7 +769,7 @@ def game():
         if quit:
             pygame.quit()
             break
-        quit, status = main(path, pathfire)
+        quit, status = main(path, pathfire, difficulty)
         if quit:
             pygame.quit()
             break
