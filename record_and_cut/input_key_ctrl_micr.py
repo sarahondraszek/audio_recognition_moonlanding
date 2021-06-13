@@ -87,6 +87,6 @@ def release_key(key):
         kb.release("r")
 
 
-simulate_key_press("escape")
+#simulate_key_press("escape")
 
 
