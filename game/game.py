@@ -410,7 +410,7 @@ def main(path, pathfire, difficulty):
             self.rect = self.surf.get_rect()
             self.colision_steps = random.randint(5, 15)
             self.colision_height = random.randint(100, 400)
-            self.speed = 25
+            self.speed = 1
 
         def update(self):
             """
@@ -488,7 +488,6 @@ def main(path, pathfire, difficulty):
             self.bottom = SCREEN_HEIGHT + 40
             self.rect.left = -40
 
-
     class Explosion(pygame.sprite.Sprite):
         def __init__(self):
             super(Explosion, self).__init__()
@@ -512,11 +511,32 @@ def main(path, pathfire, difficulty):
         def set_off(self):
             self.rect.top = SCREEN_HEIGHT
 
+    class Flag(pygame.sprite.Sprite):
+        def __init__(self):
+            super(Flag, self).__init__()
+
+        def set_in(self, pos_bottom):
+            flag_pic = resource_path("game/data/flag_de_in.png")
+            self.surf = pygame.transform.scale(pygame.image.load(flag_pic).convert(), (100, 150))
+            self.surf.set_colorkey((0, 0, 0), RLEACCEL)
+            self.rect = self.surf.get_rect()
+            self.rect.bottom = SCREEN_HEIGHT - 20
+            self.rect.left = SCREEN_WIDTH / 2 - self.rect.right / 2 + 250
+
+        def set_out(self, pos_bottom):
+            flag_pic = resource_path("game/data/flag_de_out.png")
+            self.surf = pygame.transform.scale(pygame.image.load(flag_pic).convert(), (100, 150))
+            self.surf.set_colorkey((0, 0, 0), RLEACCEL)
+            self.rect = self.surf.get_rect()
+            self.rect.bottom = SCREEN_HEIGHT - 20
+            self.rect.left = SCREEN_WIDTH / 2 - self.rect.right / 2 + 250
+
     rocket = Player()
     meteor = Meteor()
     moon = Moon()
     mic = Microphone()
     explosion = Explosion()
+    flag = Flag()
 
     moon.set_def()
     rocket.set_def()
@@ -542,6 +562,7 @@ def main(path, pathfire, difficulty):
     listen_time = 0
     order = ""
     crash = False
+    meteordown = False
 
     while running:
 
@@ -579,11 +600,21 @@ def main(path, pathfire, difficulty):
                                 mic.set_on()
                                 listen = True
                                 waiting = False
+                                meteordown = False
 
                             if event.key == K_UP or event.key == K_LEFT or event.key == K_RIGHT or event.key == K_DOWN:
+                                if event.key == K_UP:
+                                    order = "up"
+                                elif event.key == K_LEFT:
+                                    order = "left"
+                                elif event.key == K_RIGHT:
+                                    order = "right"
+                                else:
+                                    order = "down"
                                 pressed_keys = pygame.key.get_pressed()
                                 fire = rocket.update(pressed_keys)
                                 waiting = False
+                                meteordown = True
                                 if not event.key == K_DOWN:
                                     rocket.lower_fuel()
                                 # print(fire)
@@ -596,7 +627,8 @@ def main(path, pathfire, difficulty):
                             exit = True
 
                 try:
-                    meteor.col_down()
+                    if meteordown:
+                        meteor.col_down()
                 except Exception:
                     pass
 
@@ -668,7 +700,7 @@ def main(path, pathfire, difficulty):
             status = "Out of fuel"
 
         pygame.display.flip()
-        clock.tick(30)
+        # clock.tick(30)
 
     if status == "Crash" or status == "Rocket was hit":
         explo = True
@@ -693,6 +725,39 @@ def main(path, pathfire, difficulty):
             runs += 1
             screen.fill((0, 0, 0))
             for entity in crash_sprites:
+                screen.blit(entity.surf, entity.rect)
+            pygame.display.flip()
+            clock.tick(30)
+
+    if status == "Landed successfully":
+        flag_bool = True
+        height = SCREEN_HEIGHT
+        flag.set_in(height)
+        landing_sprites = pygame.sprite.Group()
+        landing_sprites.add(moon)
+        landing_sprites.add(rocket)
+        landing_sprites.add(flag)
+        runs = 0
+        while flag_bool:
+            if runs == 8:
+                flag.set_out(height)
+            elif runs == 16:
+                flag.set_in(height)
+            elif runs == 24:
+                flag.set_out(height)
+            elif runs == 32:
+                flag.set_in(height)
+            elif runs == 40:
+                flag.set_out(height)
+            elif runs == 48:
+                flag.set_in(height)
+            elif runs == 56:
+                flag.set_out(height)
+            elif runs == 64:
+                flag_bool = False
+            runs += 1
+            screen.fill((0, 0, 0))
+            for entity in landing_sprites:
                 screen.blit(entity.surf, entity.rect)
             pygame.display.flip()
             clock.tick(30)
