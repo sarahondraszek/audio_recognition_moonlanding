@@ -72,6 +72,8 @@ def choose_player():
     exit = False
     path = ""
     pathfire = ""
+    pathflag_in = ""
+    pathflag_out = ""
     difficulty = 0
     while start:
         for event in pygame.event.get():
@@ -84,16 +86,22 @@ def choose_player():
                 if event.key == K_1:
                     path = "game/data/naumannnofire.png"
                     pathfire = "game/data/naumannfire.png"
+                    pathflag_in = "game/data/flag_heart_in.png"
+                    pathflag_out = "game/data/flag_heart_out.png"
                     difficulty = 1
                     start = False
                 if event.key == K_2:
                     path = "game/data/studiforcenofire.png"
                     pathfire = "game/data/studiforcefire.png"
+                    pathflag_in = "game/data/flag_sf_in.png"
+                    pathflag_out = "game/data/flag_sf_out.png"
                     difficulty = 2
                     start = False
                 if event.key == K_3:
                     path = "game/data/kuglernofire.png"
                     pathfire = "game/data/kuglerfire.png"
+                    pathflag_in = "game/data/flag_heart_in.png"
+                    pathflag_out = "game/data/flag_heart_out.png"
                     difficulty = 3
                     start = False
             if event.type == QUIT:
@@ -116,7 +124,7 @@ def choose_player():
         screen.blit(choose3, (900, 500))
         pygame.display.flip()
         clock.tick(30)
-    return exit, path, pathfire, difficulty
+    return exit, path, pathfire, difficulty, pathflag_in, pathflag_out
 
 
 def menu():
@@ -176,7 +184,7 @@ def menu():
     return exit
 
 
-def main(path, pathfire, difficulty):
+def main(path, pathfire, difficulty, pathflag_in, pathflag_out):
     """
     Manages the actual game
     :return: A boolean to see if the game shall terminate and the message that shall be shown on the end screen
@@ -514,22 +522,28 @@ def main(path, pathfire, difficulty):
     class Flag(pygame.sprite.Sprite):
         def __init__(self):
             super(Flag, self).__init__()
+            self.flag_in = resource_path(pathflag_in)
+            self.flag_out = resource_path(pathflag_out)
 
         def set_in(self, pos_bottom):
-            flag_pic = resource_path("game/data/flag_de_in.png")
-            self.surf = pygame.transform.scale(pygame.image.load(flag_pic).convert(), (100, 150))
+            flag_pic = self.flag_in
+            self.surf = pygame.transform.scale(pygame.image.load(flag_pic).convert(), (200, 300))
             self.surf.set_colorkey((0, 0, 0), RLEACCEL)
             self.rect = self.surf.get_rect()
-            self.rect.bottom = SCREEN_HEIGHT - 20
+            self.rect.bottom = SCREEN_HEIGHT + 10
             self.rect.left = SCREEN_WIDTH / 2 - self.rect.right / 2 + 250
 
         def set_out(self, pos_bottom):
-            flag_pic = resource_path("game/data/flag_de_out.png")
-            self.surf = pygame.transform.scale(pygame.image.load(flag_pic).convert(), (100, 150))
+            flag_pic = self.flag_out
+            self.surf = pygame.transform.scale(pygame.image.load(flag_pic).convert(), (200, 300))
             self.surf.set_colorkey((0, 0, 0), RLEACCEL)
             self.rect = self.surf.get_rect()
-            self.rect.bottom = SCREEN_HEIGHT - 20
+            self.rect.bottom = SCREEN_HEIGHT + 10
             self.rect.left = SCREEN_WIDTH / 2 - self.rect.right / 2 + 250
+
+        def change_flag(self, flagin, flagout):
+            self.flag_in = flagin
+            self.flag_out = flagout
 
     rocket = Player()
     meteor = Meteor()
@@ -702,6 +716,7 @@ def main(path, pathfire, difficulty):
         pygame.display.flip()
         # clock.tick(30)
 
+    # Explosion simulation
     if status == "Crash" or status == "Rocket was hit":
         explo = True
         if status == "Crash":
@@ -729,38 +744,48 @@ def main(path, pathfire, difficulty):
             pygame.display.flip()
             clock.tick(30)
 
-    if status == "Landed successfully":
-        flag_bool = True
-        height = SCREEN_HEIGHT
-        flag.set_in(height)
-        landing_sprites = pygame.sprite.Group()
-        landing_sprites.add(moon)
+    # Flag simulation
+    rocket_destroyed = False
+    if status == "Crash" or status == "Rocket was hit":
+        flag.change_flag("game/data/flag_shit_in.png", "game/data/flag_shit_out.png")
+        rocket_destroyed = True
+    elif status == "Out of fuel":
+        flag.change_flag("game/data/flag_shit_in.png", "game/data/flag_shit_out.png")
+    elif status == "Quit voluntarily":
+        flag.change_flag("game/data/flag_sloth_in.png", "game/data/flag_sloth_out.png")
+
+    flag_bool = True
+    height = SCREEN_HEIGHT
+    flag.set_in(height)
+    landing_sprites = pygame.sprite.Group()
+    landing_sprites.add(moon)
+    if not rocket_destroyed:
         landing_sprites.add(rocket)
-        landing_sprites.add(flag)
-        runs = 0
-        while flag_bool:
-            if runs == 8:
-                flag.set_out(height)
-            elif runs == 16:
-                flag.set_in(height)
-            elif runs == 24:
-                flag.set_out(height)
-            elif runs == 32:
-                flag.set_in(height)
-            elif runs == 40:
-                flag.set_out(height)
-            elif runs == 48:
-                flag.set_in(height)
-            elif runs == 56:
-                flag.set_out(height)
-            elif runs == 64:
-                flag_bool = False
-            runs += 1
-            screen.fill((0, 0, 0))
-            for entity in landing_sprites:
-                screen.blit(entity.surf, entity.rect)
-            pygame.display.flip()
-            clock.tick(30)
+    landing_sprites.add(flag)
+    runs = 0
+    while flag_bool:
+        if runs == 8:
+            flag.set_out(height)
+        elif runs == 16:
+            flag.set_in(height)
+        elif runs == 24:
+            flag.set_out(height)
+        elif runs == 32:
+            flag.set_in(height)
+        elif runs == 40:
+            flag.set_out(height)
+        elif runs == 48:
+            flag.set_in(height)
+        elif runs == 56:
+            flag.set_out(height)
+        elif runs == 64:
+            flag_bool = False
+        runs += 1
+        screen.fill((0, 0, 0))
+        for entity in landing_sprites:
+            screen.blit(entity.surf, entity.rect)
+        pygame.display.flip()
+        clock.tick(30)
 
     return exit, status
 
@@ -826,7 +851,7 @@ def game():
     :return: None
     """
     while True:
-        quit, path, pathfire, difficulty = choose_player()
+        quit, path, pathfire, difficulty, pathflag_in, pathflag_out = choose_player()
         if quit:
             pygame.quit()
             break
@@ -834,7 +859,7 @@ def game():
         if quit:
             pygame.quit()
             break
-        quit, status = main(path, pathfire, difficulty)
+        quit, status = main(path, pathfire, difficulty, pathflag_in, pathflag_out)
         if quit:
             pygame.quit()
             break
