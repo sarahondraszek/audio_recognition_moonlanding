@@ -1,5 +1,6 @@
 import numpy as np
 import tensorflow.keras
+from tensorflow import keras
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
 # from keras.utils import to_categorical

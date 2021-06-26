@@ -6,7 +6,6 @@ import keras
 import glob
 import pandas
 
-
 """ THIS SCRIPT IS A MANAGING TOOL FOR RUNNING THE DIFFERENT COMPONENTS """
 
 """ Set parameters in the files first """
@@ -23,21 +22,23 @@ model = keras.models.load_model('./model')
 """ Create numpy-arrays """
 # create_arrays()
 
+
+""" Train model """
+
 # If you need to train the model, please use the run_train.py script so you can save it locally
 # Involved are preprocess_with_yaml.py and train.py
 
-""" Train model """
+
+""" Predict samples """
 
 # When you want to test/predict samples, use the following method -> Method takes path for files as param,
 # makes file with output
 # For single files, use make_single_prediction
 
-""" Predict samples """
 
 output_matrix = {}
 for label in get_labels()[0]:
     output_matrix[label] = make_predictions(sample_path + label + '/*.wav', model)
 
-print(output_matrix)
 df = pandas.DataFrame.from_dict(output_matrix, orient='index')
 df.to_csv('./output_testing/output_predictions.csv')

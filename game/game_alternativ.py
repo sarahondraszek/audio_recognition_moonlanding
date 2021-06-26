@@ -137,7 +137,7 @@ def choose_player():
         choose3 = font_a.render("Press '3'", True, (255, 255, 255))
         screen.blit(choose3, (900, 500))
         pygame.display.flip()
-        clock.tick(30)
+        clock.tick_busy_loop(30)
     return exit, path, pathfire, difficulty, pathflag_in, pathflag_out
 
 
@@ -729,7 +729,7 @@ def main(path, pathfire, difficulty, pathflag_in, pathflag_out):
             status = "Out of fuel"
 
         pygame.display.flip()
-        # clock.tick(30)
+        # clock.tick_busy_loop(30)
 
     # Explosion simulation
     if status == "Crash" or status == "Rocket was hit":
@@ -757,7 +757,7 @@ def main(path, pathfire, difficulty, pathflag_in, pathflag_out):
             for entity in crash_sprites:
                 screen.blit(entity.surf, entity.rect)
             pygame.display.flip()
-            clock.tick(30)
+            clock.tick_busy_loop(30)
 
     return exit, status, rocket, moon
 
@@ -831,7 +831,7 @@ def flag(status, rocket, moon, pathflag_in, pathflag_out):
         for entity in landing_sprites:
             screen.blit(entity.surf, entity.rect)
         pygame.display.flip()
-        clock.tick(30)
+        clock.tick_busy_loop(30)
 
 
 def end_screen(status):

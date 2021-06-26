@@ -20,4 +20,5 @@ y_test_hot = tf.keras.utils.to_categorical(y_test)
 model = get_model()
 model.fit(X_train, y_train_hot, batch_size=batch_size, epochs=epochs, verbose=verbose,
           validation_data=(X_test, y_test_hot))
+
 # model.save('./model')
