@@ -577,6 +577,7 @@ def main(path, pathfire, difficulty, pathflag_in, pathflag_out):
     order = ""
     crash = False
     meteordown = False
+    said_go = False
 
     while running:
 
@@ -598,6 +599,7 @@ def main(path, pathfire, difficulty, pathflag_in, pathflag_out):
                         simulate_key_press("down")
                     elif order == "go":
                         simulate_key_press("down")
+                        said_go = True
                     elif order == "stop":
                         running = False
                     listen = False
@@ -624,7 +626,10 @@ def main(path, pathfire, difficulty, pathflag_in, pathflag_out):
                                 elif event.key == K_RIGHT:
                                     order = "right"
                                 else:
-                                    order = "down"
+                                    if said_go:
+                                        said_go = False
+                                    else:
+                                        order = "down"
                                 pressed_keys = pygame.key.get_pressed()
                                 fire = rocket.update(pressed_keys)
                                 waiting = False
