@@ -8,7 +8,7 @@ from tensorflow import keras
 from record_and_cut.cut_1sec import segment as s
 from preprocessing_and_training.predict import make_single_prediction as msp
 
-kb = Controller()
+# kb = Controller()
 
 """wave-file parameters"""
 sample_rate = 16000
