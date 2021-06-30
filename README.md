@@ -20,7 +20,7 @@ Python 3.8
 Die Dokumentation kann [hier](https://www.overleaf.com/7472498371wkqqgnrjstds) eingesehen werden.
 
 ## How-to play
-Das Spiel wird durch ausführen der ```MAIN.py``` gestartet.
+Das Spiel wird durch Ausführen der ```MAIN.py``` gestartet.
 Weitere Informationen zu den Spielregeln können dem [Benutzerhandbuch](https://www.overleaf.com/6955124173ytxtytbfrpqm) entnommen werden.
 
 ## Mitwirkende
