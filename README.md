@@ -21,6 +21,9 @@ Python 3.8
 
 Die Dokumentation kann [hier](https://www.overleaf.com/7472498371wkqqgnrjstds) eingesehen werden.
 
+## How-to train (your drago-... model?)
+Das Sprachmodell für die Spracherkennung wird über die sequentielle Ausführung verschiedener Skripte vollzogen. Zunächst müssen aus den WAVE-Dateien numpy-Arrays via ```create_arrays.py``` erstellt werden. Daraufhin kann mit ```run_train.py``` das Modell dann trainiert und abgespeichert werden. Gegebenenfalls muss für die Ausführung dieser Skripte das Projekt zur Systemvariable hinzugefügt werden, damit die Packages richtig erkannt werden.
+
 ## How-to play
 Das Spiel wird durch Ausführen der ```MAIN.py``` gestartet.
 Weitere Informationen zu den Spielregeln können dem [Benutzerhandbuch](https://www.overleaf.com/6955124173ytxtytbfrpqm) entnommen werden.
