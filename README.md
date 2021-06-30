@@ -14,8 +14,10 @@ Python 3.8
 * pydub 0.25.1
 * pygame 2.0.1
 * pyYAML 5.4.1
+* sklearn 0.0
 * sounddevice 0.4.1
 * tensorflow 2.5.0
+* tqdm 4.61.0
 
 Die Dokumentation kann [hier](https://www.overleaf.com/7472498371wkqqgnrjstds) eingesehen werden.
 
