@@ -1,7 +1,7 @@
 
 # Simple Audio Recognition of Speech Commands for Moonlanding Game
 
-Im Rahmen des Projektseminar-Moduls des Studiengangs Computerlinguistik an der Universität haben wir uns ein Semester lang mit der Programmierung einer per Sprachsteuerung spielbaren Variante des Moonlanding-Spieles beschäftigt. Ziel des Spiels ist es hierbei, eine Rakete sicher auf der Mondoberfläche landen zu lassen.
+Im Rahmen des Projektseminar-Moduls des Studiengangs Computerlinguistik an der Universität Trier haben wir uns ein Semester lang mit der Programmierung einer per Sprachsteuerung spielbaren Variante des Moonlanding-Spieles beschäftigt. Ziel des Spiels ist es hierbei, eine Rakete sicher auf der Mondoberfläche landen zu lassen.
 
 ## Requirements
 Python 3.8
