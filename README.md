@@ -10,7 +10,7 @@ Python 3.8
 * librosa 0.8.0
 * numpy 1.19.5
 * pandas 1.4.2
-* PyAutoGui 0.9.52
+* pyAutoGui 0.9.52
 * pydub 0.25.1
 * pygame 2.0.1
 * pyYAML 5.4.1
