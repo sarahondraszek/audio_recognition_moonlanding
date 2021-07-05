@@ -51,6 +51,8 @@ def wav2mfcc(file_path, max_len=40):
     """
     wave, sr = librosa.load(file_path, mono=True, sr=None)
     wave = wave[::3]
+    
+    # generate mfccs, set samplingrate to 16kHz; window length to 512
     mfcc = librosa.feature.mfcc(wave, sr=16000, n_fft=512)
 
     # If maximum length exceeds mfcc lengths then pad the remaining ones,
